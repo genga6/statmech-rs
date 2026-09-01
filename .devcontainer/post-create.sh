@@ -39,6 +39,20 @@ install_typos() {
   log "typos: done (cargo install)"
 }
 
+install_python_plotting() {
+  log "matplotlib: start"
+  if python3 -c "import matplotlib" >/dev/null 2>&1; then
+    log "matplotlib: already installed"
+    return
+  fi
+
+  # bookworm の python3 には pip も ensurepip も入っていない。
+  # PEP 668 で pip のシステム全体インストールも塞がれているので apt で入れる。
+  sudo apt-get update -qq
+  sudo apt-get install -y -qq python3-matplotlib
+  log "matplotlib: done"
+}
+
 setup_git_hooks() {
   log "git hooks: start"
   if [ -d .githooks ]; then
@@ -63,6 +77,7 @@ install_claude() {
 main() {
   install_rust_components
   install_typos
+  install_python_plotting
   setup_git_hooks
   install_claude
 }
